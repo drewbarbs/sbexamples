@@ -4,9 +4,10 @@
 #include <memory>
 #include <iostream>
 #include <chrono>
+#include <sstream>
 #include "stateless_deleter.h"
 
-#include <GL/glew.h>
+#include <GL/gl3w.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
@@ -72,13 +73,13 @@ int sb::appmain() {
             throw std::runtime_error(string("Failed to create SDL window: ") + SDL_GetError());
         }
 
-        // Initialize GLEW
-        glewExperimental = GL_TRUE;
-        GLenum err = glewInit();
-        if (err != GLEW_OK) {
-            throw std::runtime_error(string("Failed to initialize GLEW: ") + reinterpret_cast<const char *> (glewGetErrorString(err)));
+        if (gl3wInit()) {
+            throw std::runtime_error("Failed to initialize gl3w");
+        } else if (!gl3wIsSupported(GL_MAJOR, GL_MINOR)) {
+            stringstream s;
+            s << "OpenGL version " << GL_MAJOR << "." << GL_MINOR << " not supported.";
+            throw std::runtime_error(s.str());
         }
-        cout << "Successfully initialized GLEW: " << glewGetString(GLEW_VERSION);
 
         T instance;
         SDL_Event window_event;
