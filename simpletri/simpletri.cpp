@@ -43,7 +43,7 @@ public:
         glDeleteShader(vert_shader);
         glDeleteShader(frag_shader);
 
-        glCreateVertexArrays(1, &vao);
+        glGenVertexArrays(1, &vao);
     }
 
     ~simpletri() {
@@ -52,4 +52,4 @@ public:
     }
 };
 
-DECLARE_APP(simpletri)
+DECLARE_APP_GL_VER(simpletri, 3, 3)

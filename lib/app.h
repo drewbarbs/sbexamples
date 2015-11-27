@@ -24,16 +24,21 @@ namespace sb {
         virtual void do_render(double current_time) {}
     };
 
-    template<typename T>
+    template<typename T, int GL_MAJOR=4, int GL_MINOR=4>
     int appmain();
 }
 
-#define DECLARE_APP(app_t) \
-int main() {               \
+#define DECLARE_APP(app_t)     \
+int main() {                   \
   return sb::appmain<app_t>(); \
 }
 
-template<typename T>
+#define DECLARE_APP_GL_VER(app_t, GL_MAJOR, GL_MINOR) \
+int main() {                                          \
+  return sb::appmain<app_t, GL_MAJOR, GL_MINOR>();    \
+}
+
+template<typename T, int GL_MAJOR, int GL_MINOR>
 int sb::appmain() {
     using namespace std;
 
@@ -42,8 +47,8 @@ int sb::appmain() {
         return 1;
     }
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, GL_MAJOR);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, GL_MINOR);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     try {

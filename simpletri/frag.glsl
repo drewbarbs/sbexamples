@@ -1,4 +1,4 @@
-#version 450 core
+#version 330 core
 
 // "in frag shaders, the value of output variables goes directly onto the screen"
 out vec4 color;
