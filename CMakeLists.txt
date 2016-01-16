@@ -21,3 +21,4 @@ function(add_example name)
 endfunction()
 
 add_subdirectory(simpletri)
+add_subdirectory(x11simpletri)
