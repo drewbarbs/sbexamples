@@ -1,7 +1,3 @@
-//
-// Created by abarbs on 11/17/15.
-//
-
 #ifndef SBEXAMPLES_STATELESS_DELETER_H
 #define SBEXAMPLES_STATELESS_DELETER_H
 
