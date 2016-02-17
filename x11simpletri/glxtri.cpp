@@ -103,6 +103,9 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    XWindowAttributes windowAttributes;
+    XGetWindowAttributes(display.get(), win.get(), &windowAttributes);
+
     XStoreName(display.get(), win.get(), "GLX Window");
     XMapWindow(display.get(), win.get());
 
@@ -157,6 +160,22 @@ int main(int argc, char* argv[])
     printf("Making context current\n");
     glXMakeCurrent(display.get(), win.get(), ctx.get());
 
+    // Make window fullscreen
+    XClientMessageEvent xclient = {0};
+    xclient.type = ClientMessage;
+    xclient.window = win.get();
+    xclient.message_type = XInternAtom(display.get(), "_NET_WM_STATE", False);
+    xclient.format = 32;
+    xclient.data.l[0] = 1;
+    xclient.data.l[1] = XInternAtom(display.get(), "_NET_WM_STATE_FULLSCREEN", False);
+    xclient.data.l[2] = 0;
+
+    XSendEvent(display.get(),
+               windowAttributes.root,
+               False,
+               SubstructureRedirectMask | SubstructureNotifyMask,
+               (XEvent *) &xclient);
+
     // register interest in the delete window message. WM will produce an event and allow
     // us to gracefully clean up after ourselves, rather than go ahead and destroy the window,
     // close the display as soon as window is closed by user
@@ -177,9 +196,34 @@ int main(int argc, char* argv[])
     XEvent ev;
     simpletri instance;
     auto start_time = std::chrono::steady_clock::now();
+    auto last_mon_switch = std::chrono::steady_clock::now();
+    auto last_mon = 1;
     while (1) {
         select(x11_fd + 1, &ev_fds, nullptr, nullptr, &tv);
-        std::chrono::duration<double> elapsed = std::chrono::steady_clock::now() - start_time;
+        auto now = std::chrono::steady_clock::now();
+        std::chrono::duration<double> elapsed = now - start_time;
+        std::chrono::duration<double> since_last_mon_switch = now - last_mon_switch;
+        if (since_last_mon_switch > std::chrono::seconds{5}) {
+            auto mon = (last_mon + 1) % 2;
+            XClientMessageEvent xclient = {0};
+            xclient.type = ClientMessage;
+            xclient.window = win.get();
+            xclient.message_type = XInternAtom(display.get(), "_NET_WM_FULLSCREEN_MONITORS", False);
+            xclient.format = 32;
+            xclient.data.l[0] = mon;
+            xclient.data.l[1] = mon;
+            xclient.data.l[2] = mon;
+            xclient.data.l[3] = mon;
+            xclient.data.l[4] = 1;
+
+            XSendEvent(display.get(),
+                       windowAttributes.root,
+                       False,
+                       SubstructureRedirectMask | SubstructureNotifyMask,
+                       (XEvent *) &xclient);
+            last_mon = mon;
+            last_mon_switch = now;
+        }
         instance.render(elapsed.count());
         glXSwapBuffers(display.get(), win.get());
         while (XPending(display.get())) {
