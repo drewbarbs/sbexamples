@@ -7,9 +7,16 @@ void simpletri::do_render(double time) {
 
     glUseProgram(prog);
     glBindVertexArray(vao);
-    // Note that we're drawing without a bound array buffer, which is allowed in core profile
+    // Note that we're drawing without a bound array buffer: no
+    // VertexBufferObject, and no calls to glVertexAttribPointer,
+    // because our vertices are hardedcoded into vert.glsl. This is
+    // allowed in core profile
     // http://renderingpipeline.com/2012/03/attribute-less-rendering/
     // https://www.opengl.org/wiki_132/index.php/Vertex_Rendering
+
+    // By specifying first index = 0, count = 3, we have
+    // OpenGL invoking our vertex shader 3 times with gl_VertexID = 0,
+    // 1, and 2
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 

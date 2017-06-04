@@ -12,7 +12,7 @@ namespace sb {
         virtual ~app() { }
 
     private:
-        virtual void do_render(double current_time) {}
+      virtual void do_render(double current_time) = 0;
     };
 }
 

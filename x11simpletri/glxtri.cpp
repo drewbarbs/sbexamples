@@ -3,11 +3,12 @@
  * https://www.opengl.org/wiki/Tutorial:_OpenGL_3.0_Context_Creation_%28GLX%29
  *
  */
-
-#include <iostream>
-#include <chrono>
-#include <thread>
 #include <atomic>
+#include <chrono>
+#include <functional>
+#include <iostream>
+#include <thread>
+
 
 #include <GL/gl3w.h>
 #include <X11/Xlib.h>
@@ -186,6 +187,10 @@ int main(int argc, char* argv[])
 
     // Event loop, "inspired by"
     // http://stackoverflow.com/a/8592969/756104
+    // We'll get the X display socket and select() with a timeout so
+    // we'll swap monitors every 5 seconds, or immediately break out
+    // of sleep and exit the program when we get an X event (in this
+    // case, we're interested in WM_DELETE_WINDOW)
     auto x11_fd = ConnectionNumber(display.get());
     fd_set ev_fds;
     FD_ZERO(&ev_fds);
@@ -229,10 +234,9 @@ int main(int argc, char* argv[])
         while (XPending(display.get())) {
             XNextEvent(display.get(), &ev);
             if (ev.xclient.data.l[0] == wm_delete_message) {
-                goto cleanup;
+                break;
             }
         }
     }
-    cleanup:
     return 0;
 }

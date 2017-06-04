@@ -6,6 +6,7 @@
 #include <chrono>
 #include <sstream>
 #include "stateless_deleter.h"
+#include "util.h"
 
 #include <GL/gl3w.h>
 #include <SDL2/SDL.h>
@@ -73,7 +74,7 @@ int sb::appmain() {
         bool run = true;
         auto start_time = chrono::steady_clock::now();
         while (run) {
-            SDL_WaitEventTimeout(&window_event, 50);
+            SDL_WaitEventTimeout(&window_event, 1);
 
             do {
                 if (window_event.type == SDL_QUIT) { run = false;  break; }
