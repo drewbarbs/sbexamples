@@ -1,5 +1,3 @@
-add_example(glxtri glxtri.cpp ${CMAKE_SOURCE_DIR}/simpletri/simpletri.cpp)
+add_example(glxtri glxtri.cpp "${CMAKE_SOURCE_DIR}/simpletri/simpletri.cpp"
+  SHADERS "${CMAKE_SOURCE_DIR}/simpletri/vert.glsl" "${CMAKE_SOURCE_DIR}/simpletri/frag.glsl")
 target_link_libraries(glxtri Xrandr X11 GL ${CMAKE_DL_LIBS})
-add_custom_command(TARGET glxtri PRE_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/simpletri/vert.glsl" $<TARGET_FILE_DIR:glxtri>
-        COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/simpletri/frag.glsl" $<TARGET_FILE_DIR:glxtri>)
