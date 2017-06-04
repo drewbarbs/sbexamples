@@ -5,7 +5,7 @@
 #include <iostream>
 #include <chrono>
 #include <sstream>
-#include "stateless_deleter.h"
+#include <type_traits>
 #include "util.h"
 
 #include <GL/gl3w.h>
@@ -54,9 +54,9 @@ int sb::appmain() {
             throw runtime_error(string("Failed to create SDL window: ") + SDL_GetError());
         }
 
-        std::unique_ptr<SDL_GLContext,
-        stateless_deleter<SDL_GLContext, decltype(&SDL_GL_DeleteContext), &SDL_GL_DeleteContext>
-        > context(SDL_GL_CreateContext(window.get()));
+        std::unique_ptr<std::remove_pointer<SDL_GLContext>::type,
+                        void (*)(SDL_GLContext)>
+            context(SDL_GL_CreateContext(window.get()), &SDL_GL_DeleteContext);
         if (!context) {
             throw std::runtime_error(string("Failed to create SDL window: ") + SDL_GetError());
         }
