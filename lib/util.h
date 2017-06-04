@@ -14,7 +14,7 @@ namespace sb {
   // Use to read glsl shaders
   std::string read_file(const std::string &fname);
 
-  void shader_src(const GLuint shader, const std::string &src);
+  void shader_src_and_compile(const GLuint shader, const std::string &src);
 
   // Raises exception if getGlError() != GL_NO_ERROR
   void _check_glerror(const char *file, int line);

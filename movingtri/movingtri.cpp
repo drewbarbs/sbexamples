@@ -25,17 +25,13 @@ movingtri::movingtri(): prog(glCreateProgram(), glDeleteProgram) {
   auto vert_src = sb::read_file("vert.glsl");
   auto vert_shader = sb::scope_handle<GLuint>(glCreateShader(GL_VERTEX_SHADER),
                                               glDeleteShader);
-  sb::shader_src(vert_shader.get(), vert_src);
-  glCompileShader(vert_shader.get());
-  check_glerror();
+  sb::shader_src_and_compile(vert_shader.get(), vert_src);
   glAttachShader(prog.get(), vert_shader.get());
 
   auto frag_src = sb::read_file("frag.glsl");
   auto frag_shader = sb::scope_handle<GLuint>(glCreateShader(GL_FRAGMENT_SHADER),
                                               glDeleteShader);
-  sb::shader_src(frag_shader.get(), frag_src);
-  glCompileShader(frag_shader.get());
-  check_glerror();
+  sb::shader_src_and_compile(frag_shader.get(), frag_src);
   glAttachShader(prog.get(), frag_shader.get());
 
   glLinkProgram(prog.get());
