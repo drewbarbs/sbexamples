@@ -47,3 +47,4 @@ add_subdirectory(simpletri)
 add_subdirectory(x11simpletri) # A version of the above directly using glX
 
 add_subdirectory(movingtri)
+add_subdirectory(tesstri)
