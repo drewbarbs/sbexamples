@@ -37,6 +37,15 @@ tesstri::tesstri(): prog(glCreateProgram(), glDeleteProgram) {
   sb::shader_src_and_compile(tes_shader.get(), tes_src);
   glAttachShader(prog.get(), tes_shader.get());
 
+#ifdef WITH_GEOM
+  auto geom_src = sb::read_file("geom.glsl");
+  auto geom_shader = sb::scope_handle<GLuint>(glCreateShader(GL_GEOMETRY_SHADER),
+    glDeleteShader);
+
+  sb::shader_src_and_compile(geom_shader.get(), geom_src);
+  glAttachShader(prog.get(), geom_shader.get());
+#endif
+
   auto frag_src = sb::read_file("frag.glsl");
   auto frag_shader = sb::scope_handle<GLuint>(glCreateShader(GL_FRAGMENT_SHADER),
                                               glDeleteShader);
@@ -54,9 +63,15 @@ tesstri::tesstri(): prog(glCreateProgram(), glDeleteProgram) {
       vaoi, [](GLuint vaoi) { glDeleteVertexArrays(1, &vaoi); });
   glBindVertexArray(vao.get());
 
+#ifdef WITH_GEOM
+  // Make the point size large
+  glPointSize(5.0);
+#else
   // Draw in wireframe, rather than solid color, to clearly see the
   // tessellated triangle
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+#endif // WITH_GEOM
+
 }
 
 tesstri::~tesstri() {
